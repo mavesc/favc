@@ -6,11 +6,11 @@ module.exports = {
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
-    "prettier"
+    "prettier",
   ],
   rules: {
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     "import/no-unresolved": "error",
-    "import/no-unused-modules": ["warn", { unusedExports: true }]
-  }
-}
+    "import/no-unused-modules": ["warn", { unusedExports: true }],
+  },
+};
