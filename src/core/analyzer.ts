@@ -1,5 +1,5 @@
 import { runFFprobe } from "@/utils/ffmpeg";
-import { VideoInfo } from "@/types";
+import { NonEmptyArray, VideoInfo } from "@/types";
 
 export class VideoAnalyzer {
   /**
@@ -90,14 +90,17 @@ export class VideoAnalyzer {
   /**
    * Find nearest keyframe before given timestamp, else returns the start of video
    */
-  static findPreviousKeyframe(timestamp: number, keyframes: number[]): number {
+  static findPreviousKeyframe(
+    timestamp: number,
+    keyframes: NonEmptyArray<number>
+  ): number {
     return [...keyframes].reverse().find((k) => k <= timestamp) || 0;
   }
 
   /**
    * Estimate keyframe interval (for faster strategies)
    */
-  static estimateKeyframeInterval(keyframes: number[]): number {
+  static estimateKeyframeInterval(keyframes: NonEmptyArray<number>): number {
     if (keyframes.length < 2) return 2.0; // default guess
 
     const intervals = keyframes
