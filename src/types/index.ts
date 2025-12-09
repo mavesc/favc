@@ -1,5 +1,7 @@
 export type ExtractionStrategy = "keyframe-only" | "smart-copy" | "re-encode";
 
+export type NonEmptyArray<T> = [T, ...T[]];
+
 export interface TimeRange {
   start: string;
   end: string;
