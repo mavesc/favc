@@ -39,12 +39,20 @@ export interface ClipResult {
   strategy: ExtractionStrategy;
   frames_included: number;
   is_re_encoded: boolean;
-  processing_time: number;
+  processing_time_ms: number;
   output: string;
 }
 
 export interface ExtractionReport {
-  source: VideoInfo[];
+  source: VideoInfo;
   clips: ClipResult[];
   total_processing_time_ms: number;
+}
+
+export interface StrategyContext {
+  videoInfo: VideoInfo;
+  startSeconds: number;
+  endSeconds: number;
+  outputPath: string;
+  keyframes?: NonEmptyArray<number>;
 }
