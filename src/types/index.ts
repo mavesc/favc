@@ -28,7 +28,7 @@ export interface VideoInfo {
   height: number;
   codec: string;
   keyframeInterval?: number;
-  keyframes?: number[];
+  keyframes?: NonEmptyArray<number>;
 }
 
 export interface ClipResult {
