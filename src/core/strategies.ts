@@ -56,21 +56,16 @@ export class ExtractionStrategies {
     const actualEnd = this.findNearestKeyframe(endSeconds, ctx.keyframes);
 
     const duration = actualEnd - actualStart;
-
+    // prettier-ignore
     const args = [
-      "-ss",
-      actualStart.toString(),
-      "-i",
-      ctx.videoInfo.file,
-      "t",
-      duration.toString(),
-      "-c",
-      "copy",
-      "-avoid_negative_ts",
-      "1",
-      "-y",
-      outputPath,
-    ];
+            '-ss', actualStart.toString(),
+            '-i', ctx.videoInfo.file,
+            '-t', duration.toString(),
+            '-c', 'copy',
+            '-avoid_negative_ts', '1',
+            '-y',
+            outputPath
+        ];
 
     await runFFmpeg(args);
   }
@@ -85,21 +80,16 @@ export class ExtractionStrategies {
 
     const seekStart = this.findPreviousKeyframe(startSeconds, ctx.keyframes);
     const duration = endSeconds - seekStart;
-
+    // prettier-ignore
     const args = [
-      "-ss",
-      seekStart.toString(),
-      "-i",
-      videoInfo.file,
-      "-t",
-      duration.toString(),
-      "-c",
-      "copy",
-      "-avoid_negative_ts",
-      "1",
-      "-y",
-      outputPath,
-    ];
+            '-ss', seekStart.toString(),
+            '-i', videoInfo.file,
+            '-t', duration.toString(),
+            '-c', 'copy',
+            '-avoid_negative_ts', '1',
+            '-y',
+            outputPath
+        ];
 
     await runFFmpeg(args);
   }
@@ -119,27 +109,19 @@ export class ExtractionStrategies {
             keyframes as NonEmptyArray<number>
           )
         : Math.max(0, startSeconds - 5); // seek 5s before as fallback
-
+    // prettier-ignore
     const args = [
-      "-ss",
-      seekStart.toString(),
-      "-i",
-      videoInfo.file,
-      "-ss",
-      (startSeconds - seekStart).toString(),
-      "-t",
-      duration.toString(),
-      "-c:v",
-      "libx264",
-      "-preset",
-      "fast",
-      "-crf",
-      "23",
-      "-c:a",
-      "copy",
-      "-y",
-      outputPath,
-    ];
+            '-ss', seekStart.toString(),
+            '-i', videoInfo.file,
+            '-ss', (startSeconds - seekStart).toString(), // Precise trim after decode
+            '-t', duration.toString(),
+            '-c:v', 'libx264',
+            '-preset', 'fast',
+            '-crf', '23',
+            '-c:a', 'copy',
+            '-y',
+            outputPath
+        ];
 
     await runFFmpeg(args);
   }
