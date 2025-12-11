@@ -11,11 +11,9 @@ export class Logger {
   private module = "";
   private numLogLevel = 0;
 
-  constructor(module: string = "") {
+  constructor(module: string = "", logLevel?: string) {
     this.module = module;
-    this.numLogLevel = this.getNumLogLevel(
-      this.parseLogLevel(process.env.LOG_LEVEL)
-    );
+    this.numLogLevel = this.getNumLogLevel(this.parseLogLevel(logLevel));
   }
 
   public log(message: string, level: LogLevel = LogLevel.INFO) {
