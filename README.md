@@ -125,7 +125,8 @@ console.log(\`Processing time: \${report.total_processing_time_ms}ms\`);
 | `smart-copy` | Fast | Full keyframe scan | Batch extraction (5+ clips) |
 | `re-encode` | Slow | None | Single/few clips, frame-perfect |
 
-[!TIP] Rule of thumb: Use `smart-copy` (default) unless you need frame-perfect accuracy (`re-encode`) or maximum speed (`keyframe-only`).
+> [!TIP] 
+> Rule of thumb: When extracting several clips use `smart-copy` (default) unless you need frame-perfect accuracy (`re-encode`) or maximum speed (`keyframe-only`). When extracting 1-3 clips use `re-encode`.
 
 ### When Each Strategy is Fastest
 
