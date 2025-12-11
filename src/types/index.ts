@@ -56,3 +56,19 @@ export interface StrategyContext {
   outputPath: string;
   keyframes?: NonEmptyArray<number>;
 }
+
+export interface ExtractOptions {
+  input: string;
+  start?: string;
+  end?: string;
+  output?: string;
+  clips?: string;
+  strategy?: ExtractionStrategy;
+  report?: string;
+}
+
+export interface ThumbnailOptions {
+  input: string;
+  time: string;
+  output: string;
+}
