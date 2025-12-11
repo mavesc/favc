@@ -10,6 +10,9 @@
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build:all": "npm run build:lib && npm run build:cli",
+    "build:lib": "tsup src/index.ts --format esm,cjs --dts",
+    "build:cli": "tsup src/cli.ts --format cjs --no-dts --outDir dist",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
@@ -19,7 +22,7 @@
   "dependencies": {
     "chalk": "^5.6.2",
     "commander": "^11.1.0",
-    "matchixir": "^1.0.0",
+    "matchixir": "^1.1.0",
     "ora": "^5.4.1",
     "zod": "^4.1.12"
   },
