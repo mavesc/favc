@@ -65,6 +65,7 @@ export interface ExtractOptions {
   clips?: string;
   strategy?: ExtractionStrategy;
   report?: string;
+  logLevel?: string;
 }
 
 export interface ThumbnailOptions {
