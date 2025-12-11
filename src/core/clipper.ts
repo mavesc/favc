@@ -11,6 +11,9 @@ import {
     StrategyContext,
 } from "@/types";
 import { runFFmpeg } from "@/utils/ffmpeg";
+import { Logger } from "@/utils/logger";
+
+const c = new Logger("Clipper");
 
 export class VideoClipper {
     static validateTimeRange(
@@ -38,9 +41,9 @@ export class VideoClipper {
     ): Promise<ExtractionReport> {
         const startTime = Date.now();
 
-        console.log("Analyzing video...");
+        c.log("Analyzing video...");
         const videoInfo = await VideoAnalyzer.analyze(inputFile);
-        console.log(
+        c.log(
             `Video: ${videoInfo.width}x${videoInfo.height} @ ${videoInfo.framerate.toFixed(2)}fps, ${videoInfo.duration.toFixed(2)}s`
         );
 
@@ -50,13 +53,13 @@ export class VideoClipper {
 
         let keyframes: NonEmptyArray<number>;
         if (needsKeyframes) {
-            console.log("Extracting keyframe positions (this may take a while)...");
+            c.log("Extracting keyframe positions (this may take a while)...");
             keyframes = await VideoAnalyzer.getKeyframes(inputFile);
-            console.log(`Found ${keyframes.length} keyframes`);
+            c.log(`Found ${keyframes.length} keyframes`);
 
             videoInfo.keyframeInterval =
                 VideoAnalyzer.estimateKeyframeInterval(keyframes);
-            console.log(
+            c.log(
                 `Average keyframe interval: ${videoInfo.keyframeInterval.toFixed(2)}s`
             );
         }
@@ -67,8 +70,8 @@ export class VideoClipper {
             const clip = clips[i]!;
             const strategy = clip.strategy || defaultStrategy;
 
-            console.log(
-                `\nProcessing clip ${i + 1}/${clips.length} (${strategy})...`
+            c.log(
+                `Processing clip ${i + 1}/${clips.length} (${strategy})...`
             );
 
             const clipStart = Date.now();
@@ -113,6 +116,7 @@ export class VideoClipper {
             const clipDuration = Date.now() - clipStart;
             type timeSpan = [number, number];
 
+            // depending on the strategy, we increase precision on start/end: 
             let [actualStart, actualEnd] = match(strategy)
                 .with("keyframe-only", (): timeSpan => {
                     return [
@@ -147,7 +151,7 @@ export class VideoClipper {
             };
 
             results.push(result);
-            console.log(
+            c.log(
                 `✓ Created ${clip.output} in ${(clipDuration / 1000).toFixed(1)}s`
             );
         }
@@ -186,6 +190,6 @@ export class VideoClipper {
         ];
 
         await runFFmpeg(args);
-        console.log(`✓ Thumbnail saved to ${outputPath}`);
+        c.log(`✓ Thumbnail saved to ${outputPath}`);
     }
 }
