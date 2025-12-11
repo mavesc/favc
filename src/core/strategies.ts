@@ -1,5 +1,8 @@
 import { runFFmpeg } from "@/utils/ffmpeg";
 import { NonEmptyArray, StrategyContext } from "@/types";
+import { Logger, LogLevel } from "@/utils/logger";
+
+const section = "Strategies";
 
 export class ExtractionStrategies {
   static findNearestKeyframe(
@@ -39,7 +42,11 @@ export class ExtractionStrategies {
   /**
    * KEYFRAME-ONLY: Fast, no re-encode, snaps to keyframes
    */
-  static async keyframeOnly(ctx: StrategyContext): Promise<void> {
+  static async keyframeOnly(
+    ctx: StrategyContext,
+    loglevel?: string
+  ): Promise<void> {
+    const c = new Logger(section, loglevel);
     this.checkKeyframeExistence(ctx.keyframes, "keyframe-only");
 
     const { startSeconds, endSeconds, outputPath } = ctx;
@@ -48,6 +55,10 @@ export class ExtractionStrategies {
     const actualEnd = this.findNearestKeyframe(endSeconds, ctx.keyframes);
 
     const duration = actualEnd - actualStart;
+    c.log(
+      `Clip duration: ${duration}s. Actual start: ${actualStart}s, actual end: ${actualEnd}s `,
+      LogLevel.DEBUG
+    );
     // prettier-ignore
     const args = [
             '-ss', actualStart.toString(),
@@ -65,13 +76,21 @@ export class ExtractionStrategies {
   /**
    * SMART-COPY: Seeks to previous keyframe, copies until end
    */
-  static async smartCopy(ctx: StrategyContext): Promise<void> {
+  static async smartCopy(
+    ctx: StrategyContext,
+    loglevel?: string
+  ): Promise<void> {
+    const c = new Logger(section, loglevel);
     this.checkKeyframeExistence(ctx.keyframes, "smart-copy");
 
     const { startSeconds, endSeconds, outputPath, videoInfo } = ctx;
 
     const seekStart = this.findPreviousKeyframe(startSeconds, ctx.keyframes);
     const duration = endSeconds - seekStart;
+    c.log(
+      `Clip duration: ${duration}s. Seek start: ${seekStart}s`,
+      LogLevel.DEBUG
+    );
     // prettier-ignore
     const args = [
             '-ss', seekStart.toString(),
@@ -89,9 +108,14 @@ export class ExtractionStrategies {
   /**
    * RE-ENCODE: Frame-accurate, but slow
    */
-  static async reEncode(ctx: StrategyContext): Promise<void> {
+  static async reEncode(
+    ctx: StrategyContext,
+    loglevel?: string
+  ): Promise<void> {
+    const c = new Logger(section, loglevel);
     const { startSeconds, endSeconds, outputPath, videoInfo } = ctx;
     const duration = endSeconds - startSeconds;
+    c.log(`Clip duration: ${duration}`, LogLevel.DEBUG);
 
     const keyframes = ctx.keyframes || [];
     const seekStart =

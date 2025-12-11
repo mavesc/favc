@@ -3,9 +3,8 @@ import { VideoClipper } from "../core/clipper";
 import { ThumbnailOptions } from "@/types";
 import { Logger, LogLevel } from "@/utils/logger";
 
-const c = new Logger("Thumbnailer");
-
 export async function thumbnailCommand(options: ThumbnailOptions) {
+  const c = new Logger("Thumbnailer");
   try {
     if (!fs.existsSync(options.input)) {
       c.log(`Input file ${options.input} does not exist`, LogLevel.ERROR);

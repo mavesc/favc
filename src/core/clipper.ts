@@ -12,9 +12,6 @@ import {
 } from "@/types";
 import { runFFmpeg } from "@/utils/ffmpeg";
 import { Logger } from "@/utils/logger";
-import ora from "ora";
-
-const c = new Logger("Clipper");
 
 export class VideoClipper {
   static validateTimeRange(
@@ -40,14 +37,15 @@ export class VideoClipper {
   static async extractClips(
     inputFile: string,
     clips: ClipRequest[],
-    defaultStrategy: ExtractionStrategy = "smart-copy"
+    defaultStrategy: ExtractionStrategy = "smart-copy",
+    logLevel?: string
   ): Promise<ExtractionReport> {
     const startTime = Date.now();
+    const c = new Logger("Clipper", logLevel);
 
     c.log("Analyzing video...");
-    const spinner = ora("...").start();
+
     const videoInfo = await VideoAnalyzer.analyze(inputFile);
-    spinner.succeed();
     c.log(
       `Video: ${videoInfo.width}x${videoInfo.height} @ ${videoInfo.framerate.toFixed(2)}fps, ${videoInfo.duration.toFixed(2)}s`
     );
@@ -119,7 +117,6 @@ export class VideoClipper {
       const clipDuration = Date.now() - clipStart;
       type timeSpan = [number, number];
 
-      // depending on the strategy, we increase precision on start/end:
       let [actualStart, actualEnd] = match(strategy)
         .with("keyframe-only", (): timeSpan => {
           return [
@@ -191,6 +188,6 @@ export class VideoClipper {
         ];
 
     await runFFmpeg(args);
-    c.log(`✓ Thumbnail saved to ${outputPath}`);
+    console.log(`✓ Thumbnail saved to ${outputPath}`);
   }
 }

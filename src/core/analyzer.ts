@@ -69,7 +69,7 @@ export class VideoAnalyzer {
       "-select_streams",
       "v:0",
       "-show_entries",
-      "frame=pkt_pts_time,key_frame",
+      "frame=pkt_pts_time,key_frame,best_effort_timestamp_time,pkt_dts_time",
       "-of",
       "json",
       filePath,
@@ -82,9 +82,18 @@ export class VideoAnalyzer {
     const frames = (data.frames || []) as Frame[];
     const keyframes = frames
       .filter((f) => f.key_frame === 1)
-      .map((f) => parseFloat(f.pkt_pts_time));
+      .map((f) => this.getTimestamp(f));
 
     return keyframes.sort((a, b) => a - b) as NonEmptyArray<number>;
+  }
+
+  static getTimestamp(frame: any): number {
+    const candidates = [
+      frame.pkt_pts_time,
+      frame.best_effort_timestamp_time,
+      frame.pkt_dts_time,
+    ];
+    return candidates.map((v) => parseFloat(v)).find((v) => !isNaN(v)) || 0;
   }
 
   /**
@@ -102,12 +111,12 @@ export class VideoAnalyzer {
    */
   static estimateKeyframeInterval(keyframes: NonEmptyArray<number>): number {
     if (keyframes.length < 2) return 2.0; // default guess
-
     const intervals = keyframes
       .slice(0, Math.min(keyframes.length, 20))
       .slice(1)
       .map((curr, i) => curr - keyframes[i]!);
     intervals.sort((a, b) => a - b);
+
     return intervals[Math.floor(intervals.length / 2)]!;
   }
 }
