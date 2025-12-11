@@ -100,7 +100,7 @@ export class VideoClipper {
         ctx.keyframes = keyframes!;
       }
 
-      match(strategy)
+      await match(strategy)
         .with(
           "keyframe-only",
           async () => await ExtractionStrategies.keyframeOnly(ctx)
@@ -109,7 +109,9 @@ export class VideoClipper {
           "smart-copy",
           async () => await ExtractionStrategies.smartCopy(ctx)
         )
-        .with("re-encode", async () => await ExtractionStrategies.reEncode(ctx))
+        .with("re-encode", async () => {
+          await ExtractionStrategies.reEncode(ctx);
+        })
         .none(() => {
           throw new Error(`Unknown extraction strategy: ${strategy}`);
         });
