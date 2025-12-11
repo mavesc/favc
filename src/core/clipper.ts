@@ -12,6 +12,7 @@ import {
 } from "@/types";
 import { runFFmpeg } from "@/utils/ffmpeg";
 import { Logger } from "@/utils/logger";
+import ora from "ora";
 
 const c = new Logger("Clipper");
 
@@ -44,7 +45,9 @@ export class VideoClipper {
     const startTime = Date.now();
 
     c.log("Analyzing video...");
+    const spinner = ora("...").start();
     const videoInfo = await VideoAnalyzer.analyze(inputFile);
+    spinner.succeed();
     c.log(
       `Video: ${videoInfo.width}x${videoInfo.height} @ ${videoInfo.framerate.toFixed(2)}fps, ${videoInfo.duration.toFixed(2)}s`
     );
