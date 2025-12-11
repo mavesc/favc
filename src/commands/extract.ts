@@ -2,15 +2,13 @@ import * as fs from "fs";
 import { VideoClipper } from "../core/clipper";
 import { ClipRequest, ExtractionStrategy, ExtractOptions } from "../types";
 import { Logger, LogLevel } from "@/utils/logger";
+import { validateVideoFile } from "@/utils/validator";
 
 const c = new Logger("Extractor");
 
 export async function extractCommand(options: ExtractOptions) {
   try {
-    if (!fs.existsSync(options.input)) {
-      c.log(`Input file ${options.input} does not exist`, LogLevel.ERROR);
-      process.exit(1);
-    }
+    validateVideoFile(options.input);
 
     let clipRequests: ClipRequest[] = [];
 
